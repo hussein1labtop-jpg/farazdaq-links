@@ -208,24 +208,25 @@
 
 <script>
 /* ============================================================
-   قائمة الحسابات — لإضافة حساب جديد فقط أضف سطراً هنا بنفس الشكل
+   قائمة الحسابات — لإضافة حساب جديد أضف سطراً هنا بنفس الشكل
    name    : اسم الأستاذ كما يظهر بالبطاقة
    role    : نص فرعي صغير (اختياري، اتركه "" إن لم يلزم)
-   username: يوزر الانستغرام (بدون @)
+   username: يوزر الانستغرام (بدون @) — يستخدم فقط للرابط
+   photo   : اسم ملف صورة البروفايل (ترفعه يدوياً بجذر المستودع)
    institute: true فقط لحساب المعهد نفسه (أول بطاقة)
    ============================================================ */
 const accounts = [
-  { name: "معهد الفرزدق",        role: "الحساب الرسمي",     username: "fsc.2017",        institute: true },
-  { name: "الأستاذ حسين النجار",  role: "",                  username: "hu.alnajjar" },
-  { name: "الأستاذ طه حسين",      role: "",                  username: "taha.alassady" },
-  { name: "الأستاذ حيدر الحسناوي", role: "",                 username: "haider_math" },
-  { name: "الأستاذ عبد الأمير الموسوي", role: "",            username: "abdal_amir11" },
-  { name: "الأستاذ أوس الجيلاوي", role: "",                  username: "aws.aljelawy" },
-  { name: "الأستاذ حسام وساف",    role: "",                  username: "hu.wassaf" },
-  { name: "الأستاذ إيهاب العبيدي", role: "",                 username: "ihab.alabiedi.3" },
-  { name: "الأستاذ خليل كامل",    role: "",                  username: "n2k.y" },
-  { name: "الأستاذ علاء المعموري", role: "",                 username: "91_alaa_" },
-  { name: "الأستاذ نبيل السيلاوي", role: "",                 username: "nabeelassilawi" },
+  { name: "معهد الفرزدق",        role: "الحساب الرسمي",     username: "fsc.2017",        photo: "fsc_2017.jpg", institute: true },
+  { name: "الأستاذ حسين النجار",  role: "",                  username: "hu.alnajjar",     photo: "hu_alnajjar.jpg" },
+  { name: "الأستاذ طه حسين",      role: "",                  username: "taha.alassady",   photo: "taha_alassady.jpg" },
+  { name: "الأستاذ حيدر الحسناوي", role: "",                 username: "haider_math",     photo: "haider_math.jpg" },
+  { name: "الأستاذ عبد الأمير الموسوي", role: "",            username: "abdal_amir11",    photo: "abdal_amir11.jpg" },
+  { name: "الأستاذ أوس الجيلاوي", role: "",                  username: "aws.aljelawy",    photo: "aws_aljelawy.jpg" },
+  { name: "الأستاذ حسام وساف",    role: "",                  username: "hu.wassaf",       photo: "hu_wassaf.jpg" },
+  { name: "الأستاذ إيهاب العبيدي", role: "",                 username: "ihab.alabiedi.3", photo: "ihab_alabiedi.jpg" },
+  { name: "الأستاذ خليل كامل",    role: "",                  username: "n2k.y",           photo: "n2k_y.jpg" },
+  { name: "الأستاذ علاء المعموري", role: "",                 username: "91_alaa_",        photo: "alaa_91.jpg" },
+  { name: "الأستاذ نبيل السيلاوي", role: "",                 username: "nabeelassilawi",  photo: "nabeelassilawi.jpg" },
 ];
 
 const wrap = document.getElementById("accounts");
@@ -238,7 +239,7 @@ accounts.forEach(acc => {
 
   a.innerHTML = `
     <div class="avatar">
-      <img src="https://unavatar.io/instagram/${acc.username}?fallback=logo.jpg"
+      <img src="${acc.photo}"
            alt="${acc.name}" loading="lazy"
            onerror="this.src='logo.jpg'">
     </div>
