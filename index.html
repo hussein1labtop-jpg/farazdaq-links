@@ -106,12 +106,43 @@
     flex:none;
   }
 
-  /* ===== قائمة الحسابات ===== */
-  .accounts{
+  /* ===== بطاقة حساب المعهد (خارج الحقول) ===== */
+  .institute-wrap{
+    width:100%; max-width:420px;
+    margin-bottom:26px;
+  }
+
+  /* ===== حقول المواد ===== */
+  .subjects{
     width:100%; max-width:420px;
     display:flex; flex-direction:column;
     gap:12px;
   }
+  .subject-field{
+    border-radius:20px;
+    padding:14px 14px 14px;
+    border:1.5px solid var(--field-color, var(--gold));
+    background: color-mix(in srgb, var(--field-color, var(--gold)) 7%, #fff);
+    position:relative;
+  }
+  .subject-title{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--field-color, var(--gold));
+    color:#fff;
+    font-weight:900;
+    font-size:14px;
+    padding:5px 15px;
+    border-radius:999px;
+    margin-bottom:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.12);
+  }
+  .subject-cards{
+    display:flex; flex-direction:column; gap:10px;
+  }
+
+  /* ===== بطاقة حساب ===== */
   .card{
     display:flex;
     align-items:center;
@@ -155,12 +186,25 @@
     text-overflow:ellipsis;
   }
   .role{
-    font-size:12px;
-    color:var(--gold);
-    font-weight:500;
-    margin-top:2px;
+    font-size:11.5px;
+    font-weight:700;
+    margin-top:3px;
+    display:inline-block;
+    padding:2px 10px;
+    border-radius:999px;
   }
-  .card.institute .role{color:var(--gold-light);}
+  .role.role-teacher{
+    background:rgba(30,39,64,0.10);
+    color:var(--navy);
+  }
+  .role.role-assistant{
+    background:rgba(163,146,95,0.18);
+    color:#8a723f;
+  }
+  .card.institute .role{
+    background:rgba(255,255,255,0.15);
+    color:var(--gold-light);
+  }
   .arrow{
     flex:none;
     font-size:18px;
@@ -169,7 +213,7 @@
 
   /* ===== تذييل: إضافة حسابات ===== */
   .footnote{
-    margin-top:26px;
+    margin-top:30px;
     font-size:12.5px;
     color:#6b6455;
     text-align:center;
@@ -198,7 +242,9 @@
 
   <div class="divider"><span class="diamond"></span></div>
 
-  <div class="accounts" id="accounts"></div>
+  <div class="institute-wrap" id="institute-wrap"></div>
+
+  <div class="subjects" id="subjects"></div>
 
   <div class="footnote">
     لإضافة حسابك ضمن هذه الصفحة تواصل مع إدارة الصفحة
@@ -208,34 +254,80 @@
 
 <script>
 /* ============================================================
-   قائمة الحسابات — لإضافة حساب جديد أضف سطراً هنا بنفس الشكل
-   name    : اسم الأستاذ كما يظهر بالبطاقة
-   role    : نص فرعي صغير (اختياري، اتركه "" إن لم يلزم)
-   username: يوزر الانستغرام (بدون @) — يستخدم فقط للرابط
-   photo   : اسم ملف صورة البروفايل (ترفعه يدوياً بجذر المستودع)
-   institute: true فقط لحساب المعهد نفسه (أول بطاقة)
+   حساب المعهد الرسمي — يبقى دائماً بالأعلى خارج حقول المواد
    ============================================================ */
-const accounts = [
-  { name: "معهد الفرزدق",        role: "الحساب الرسمي",     username: "fsc.2017",        photo: "fsc_2017.jpg", institute: true },
-  { name: "الأستاذ حسين النجار",  role: "",                  username: "hu.alnajjar",     photo: "hu_alnajjar.jpg" },
-  { name: "الأستاذ طه حسين",      role: "",                  username: "taha.alassady",   photo: "taha_alassady.jpg" },
-  { name: "الأستاذ حيدر الحسناوي", role: "",                 username: "haider_math",     photo: "haider_math.jpg" },
-  { name: "الأستاذ عبد الأمير الموسوي", role: "",            username: "abdal_amir11",    photo: "abdal_amir11.jpg" },
-  { name: "الأستاذ أوس الجيلاوي", role: "",                  username: "aws.aljelawy",    photo: "aws_aljelawy.jpg" },
-  { name: "الأستاذ حسام وساف",    role: "",                  username: "hu.wassaf",       photo: "hu_wassaf.jpg" },
-  { name: "الأستاذ إيهاب العبيدي", role: "",                 username: "ihab.alabiedi.3", photo: "ihab_alabiedi.jpg" },
-  { name: "الأستاذ خليل كامل",    role: "",                  username: "n2k.y",           photo: "n2k_y.jpg" },
-  { name: "الأستاذ علاء المعموري", role: "",                 username: "91_alaa_",        photo: "alaa_91.jpg" },
-  { name: "الأستاذ نبيل السيلاوي", role: "",                 username: "nabeelassilawi",  photo: "nabeelassilawi.jpg" },
+const instituteAccount = {
+  name: "معهد الفرزدق", roleLabel: "الحساب الرسمي",
+  username: "fsc.2017", photo: "fsc_2017.jpg"
+};
+
+/* ============================================================
+   المواد — كل مدرس إله صندوق (حقل) خاص بيه، وأي مساعد تابع
+   إله يندرج بداخل نفس صندوق ذلك المدرس (بقائمة accounts).
+   لإضافة مساعد جديد لمدرس موجود: أضف سطراً بقائمة accounts
+   الخاصة فيه بنفس الشكل (بعد سطر المدرس مباشرة أفضل).
+   لإضافة مدرس جديد كلياً: انسخ كتلة { title, color, accounts:[...] }
+   وحطها بالمكان المناسب، وغيّر العنوان واللون والحسابات.
+   role تكون "أستاذ" أو "مساعد" فقط — وتتحكم بلون شارة الدور بالبطاقة
+   ============================================================ */
+const subjects = [
+  { title: "مادة الكيمياء", color: "#2f7d5f", accounts: [
+      { name: "الأستاذ حسين النجار", role: "أستاذ", username: "hu.alnajjar", photo: "hu_alnajjar.jpg" },
+      { name: "يوميات دفعة 27 للأستاذ حسين النجار", role: "مساعد", username: "team.alnajjar", photo: "team_alnajjar.jpg" },
+      { name: "تجمع طلاب الأستاذ حسين النجار", role: "مساعد", username: "alnaj_jarr", photo: "alnaj_jarr.jpg" },
+  ]},
+  { title: "مادة الكيمياء", color: "#2f7d5f", accounts: [
+      { name: "الأستاذ خليل كامل", role: "أستاذ", username: "n2k.y", photo: "n2k_y.jpg" },
+  ]},
+
+  { title: "مادة الإنكليزي", color: "#2f5fbf", accounts: [
+      { name: "الأستاذ طه حسين", role: "أستاذ", username: "taha.alassady", photo: "taha_alassady.jpg" },
+  ]},
+  { title: "مادة الإنكليزي", color: "#2f5fbf", accounts: [
+      { name: "الأستاذ نبيل السيلاوي", role: "أستاذ", username: "nabeelassilawi", photo: "nabeelassilawi.jpg" },
+  ]},
+  { title: "مادة الإنكليزي", color: "#2f5fbf", accounts: [
+      { name: "الأستاذ إيهاب العبيدي", role: "أستاذ", username: "ihab.alabiedi.3", photo: "ihab_alabiedi.jpg" },
+      { name: "تجمع طلاب الأستاذ إيهاب العبيدي", role: "مساعد", username: "_mr._ehab_alabiedi", photo: "mr_ehab_alabiedi.jpg" },
+  ]},
+
+  { title: "مادة الفيزياء", color: "#7a4fc9", accounts: [
+      { name: "الأستاذ أوس الجيلاوي", role: "أستاذ", username: "aws.aljelawy", photo: "aws_aljelawy.jpg" },
+  ]},
+
+  { title: "مادة الرياضيات", color: "#c07a1f", accounts: [
+      { name: "الأستاذ حيدر الحسناوي", role: "أستاذ", username: "haider_math", photo: "haider_math.jpg" },
+      { name: "اليسر في الرياضيات | الأستاذ حيدر الحسناوي", role: "مساعد", username: "haiderxmath", photo: "haiderxmath.jpg" },
+  ]},
+  { title: "مادة الرياضيات", color: "#c07a1f", accounts: [
+      { name: "الأستاذة مها الطائي", role: "أستاذ", username: "ma_.ha995", photo: "ma_ha995.jpg" },
+      { name: "قمة النجاح | الست مها الطائي", role: "مساعد", username: "z__f__m_", photo: "z__f__m_.jpg" },
+      { name: "تجمع طلاب الست مها الطائي", role: "مساعد", username: "al_tai95", photo: "al_tai95.jpg" },
+  ]},
+  { title: "مادة الرياضيات", color: "#c07a1f", accounts: [
+      { name: "الأستاذ علاء المعموري", role: "أستاذ", username: "91_alaa_", photo: "alaa_91.jpg" },
+  ]},
+
+  { title: "مادة العربي", color: "#a83c3c", accounts: [
+      { name: "الأستاذ عبد الأمير الموسوي", role: "أستاذ", username: "abdal_amir11", photo: "abdal_amir11.jpg" },
+      { name: "تجمع طلاب الأستاذ عبد الأمير الموسوي", role: "مساعد", username: "abdalamer39", photo: "abdalamer39.jpg" },
+  ]},
+
+  { title: "مادة الأحياء", color: "#3f9b3f", accounts: [
+      { name: "الأستاذ حسام وساف", role: "أستاذ", username: "hu.wassaf", photo: "hu_wassaf.jpg" },
+      { name: "تجمع طلاب الأستاذ حسام وساف", role: "مساعد", username: "h_2026s", photo: "h_2026s.jpg" },
+  ]},
 ];
 
-const wrap = document.getElementById("accounts");
-accounts.forEach(acc => {
+function buildCard(acc, isInstitute){
   const a = document.createElement("a");
-  a.className = "card" + (acc.institute ? " institute" : "");
+  a.className = "card" + (isInstitute ? " institute" : "");
   a.href = `https://www.instagram.com/${acc.username}`;
   a.target = "_blank";
   a.rel = "noopener";
+
+  const roleClass = acc.role === "مساعد" ? "role-assistant" : "role-teacher";
+  const roleText = isInstitute ? acc.roleLabel : acc.role;
 
   a.innerHTML = `
     <div class="avatar">
@@ -245,11 +337,34 @@ accounts.forEach(acc => {
     </div>
     <div class="name-wrap">
       <div class="name">${acc.name}</div>
-      ${acc.role ? `<div class="role">${acc.role}</div>` : ""}
+      ${roleText ? `<span class="role ${roleClass}">${roleText}</span>` : ""}
     </div>
     <div class="arrow">‹</div>
   `;
-  wrap.appendChild(a);
+  return a;
+}
+
+/* حساب المعهد بالأعلى */
+document.getElementById("institute-wrap").appendChild(buildCard(instituteAccount, true));
+
+/* بناء حقول المواد — صندوق واحد لكل مدرس، ومساعديه بداخل نفس الصندوق */
+const subjectsWrap = document.getElementById("subjects");
+subjects.forEach(entry => {
+  const field = document.createElement("div");
+  field.className = "subject-field";
+  field.style.setProperty("--field-color", entry.color);
+
+  const title = document.createElement("div");
+  title.className = "subject-title";
+  title.textContent = entry.title;
+  field.appendChild(title);
+
+  const cardsWrap = document.createElement("div");
+  cardsWrap.className = "subject-cards";
+  entry.accounts.forEach(acc => cardsWrap.appendChild(buildCard(acc, false)));
+  field.appendChild(cardsWrap);
+
+  subjectsWrap.appendChild(field);
 });
 </script>
 </body>
