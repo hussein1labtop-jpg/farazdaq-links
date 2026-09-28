@@ -86,6 +86,48 @@
     box-shadow:0 10px 22px rgba(30,39,64,0.32);
   }
   .admin-line .icon{font-size:15px; direction:rtl;}
+  .address-line{
+    margin-top:12px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    background:linear-gradient(135deg, #b5a473 0%, var(--gold) 100%);
+    color:#fff;
+    padding:12px 16px;
+    border-radius:18px;
+    font-size:13px;
+    font-weight:700;
+    line-height:1.8;
+    text-align:center;
+    text-decoration:none;
+    box-shadow:0 8px 20px rgba(163,146,95,0.45), inset 0 -3px 0 rgba(0,0,0,0.12);
+    transition:transform .15s ease, box-shadow .15s ease;
+    cursor:pointer;
+  }
+  .address-line:hover, .address-line:active{
+    transform:translateY(-2px);
+    box-shadow:0 12px 24px rgba(163,146,95,0.55), inset 0 -3px 0 rgba(0,0,0,0.12);
+  }
+  .address-line .icon{font-size:20px;}
+  .address-line .addr-text{
+    font-family:'Amiri','Tajawal',serif;
+    font-size:16px;
+    font-weight:700;
+    line-height:1.9;
+    text-wrap:balance;
+  }
+  .address-line .addr-text span{white-space:nowrap;}
+  .address-line .addr-text b{opacity:.7; font-weight:400;}
+  .address-line .addr-btn{
+    background:var(--navy);
+    color:var(--cream);
+    padding:5px 16px;
+    border-radius:999px;
+    font-size:12.5px;
+    font-weight:700;
+  }
 
   /* ===== الخط الفاصل ===== */
   .divider{
@@ -226,6 +268,15 @@
     text-decoration:none;
   }
   .footnote a:hover{text-decoration:underline;}
+  .footnote{direction:ltr;}
+  .footnote .maker-link{
+    color:#2f5fbf;
+    font-weight:700;
+    font-size:13.5px;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .footnote .maker-link:hover{color:#1f4699;}
 </style>
 </head>
 <body>
@@ -238,6 +289,11 @@
       <span class="icon">📞</span>
       <span>إدارة المعهد — 07733697708</span>
     </a>
+    <a class="address-line" href="https://maps.app.goo.gl/nTxq3vYpuZ6T5UFr9" target="_blank" rel="noopener">
+      <span class="icon">📍</span>
+      <span class="addr-text"><span>كربلاء</span> <b>-</b> <span>شارع الإسكان</span><br><span>مقابل القنصلية الإيرانية</span> <b>-</b> <span>مجاور صيدلية الناسك</span></span>
+      <span class="addr-btn">افتح الخريطة ↗</span>
+    </a>
   </div>
 
   <div class="divider"><span class="diamond"></span></div>
@@ -247,9 +303,7 @@
   <div class="subjects" id="subjects"></div>
 
   <div class="footnote">
-    لإضافة حسابك ضمن هذه الصفحة تواصل مع إدارة الصفحة
-    <br>
-    <a href="https://www.instagram.com/huha_2007" target="_blank" rel="noopener">huha_2007</a>
+    Made by <a href="https://hussein1labtop-jpg.github.io/Profile-/" target="_blank" rel="noopener" class="maker-link">Hussein</a>
   </div>
 
 <script>
@@ -316,6 +370,10 @@ const subjects = [
   { title: "مادة الأحياء", color: "#3f9b3f", accounts: [
       { name: "الأستاذ حسام وساف", role: "أستاذ", username: "hu.wassaf", photo: "hu_wassaf.jpg" },
       { name: "تجمع طلاب الأستاذ حسام وساف", role: "مساعد", username: "h_2026s", photo: "h_2026s.jpg" },
+  ]},
+
+  { title: "الإعلام والتصوير", color: "#3a4a6b", accounts: [
+      { name: "الإعلامي ومصور معهد الفرزدق", role: "إعلامي", username: "m_alhelfee", photo: "m_alhelfee.jpg" },
   ]},
 ];
 
